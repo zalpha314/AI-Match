@@ -1,7 +1,8 @@
 # AI-Match
 
+
 ## Profile MetaData
-- Can change only once a day
+- Can change filter settings once a day
 
 Base
 - Birthdate (filterable by age range)
@@ -55,9 +56,11 @@ About
   - Rating Yes or Very will queue them for Step 2
 ## Step 2: Request Contact (View Profile and ask to get in contact with: Yes, No)
   - Order based on if you have already been liked, and compatability preferences
+  - You can only play if you have less than X people queued to talk to you
 ## Step 3: In Contact
   - maximum number of people based on monogomy
-    - You must end contact to get another contact
+    - You must end contact with someone to get another contact
+    - If you have not received a message, you must wait 24 hours until you can end contact
   - you see number of people
     - queued to talk to you
     - you are queued to talk to
