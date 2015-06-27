@@ -15,7 +15,7 @@ Base
 - Birthdate (filterable by age range)
 - Gender (male, female, male born as female, female born as male)
 - Postal Code (filterable by distance, bus time, or drive time)
-- Ocupation (Unemployed, Student, Part-Time, Full-Time, Retired)
+- Ocupation (Unemployed, Student, Part-Time, Full-Time, Self-Employed, Retired)
 
 Seeking
 - Attracted to (multi-select gender identity) (matched to relavent type)
