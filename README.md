@@ -40,6 +40,7 @@ Compatibility (affects compatability score, you must choose your ideal partner's
 - Confidence (1 to 10 from Unconfident to Confident)
 - Tidiness (1 to 10 from Messy to Tidy)
 - Sex-Positivity (1 to 10 from traditional to free) (marriage to love to stable relationship to comfortable to first date)
+- Activity (1 to 10 from Sedentary to Athlete)
 - Likes Pets (Cats, Dogs, Birds, Other) multi
 
 About
