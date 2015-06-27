@@ -31,7 +31,6 @@ Dealbreakers (must also choose what is acceptable)
 - Has Kids (Yes, Yes but over 18, No)
 - Wants Kids (Yes, Maybe, No)
 - Residence Situation (With Family, With Roommate(s), Alone)
-- BMI (enter as number, does not appear in profile, filterable by category multi-select)
 
 Compatibility (affects compatability score, you must choose your ideal partner's traits)
 - Demeanour (1 to 10 from serious to calm to wild)
