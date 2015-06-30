@@ -19,10 +19,11 @@ Base
 
 Seeking
 - Attracted to (multi-select gender identity) (matched to relavent type)
-- Looking for (Relationship, Dates but no commitment, Friend with Benefits, Adventure Buddy, Attention)
+- Looking for (Relationship, Dates but no commitment, fwb, cuddle buddy, Adventure Buddy, Attention) (can select what to fitler for, defaulted to your type)
 - Priority (Seriously, Casualy) (affects compatability score)
 - Monogamy (Monogomous, Neutral, Promiscuous) (neutral can be matched to any type)
 - Relationship Status (Single, In a Relationship, Married)
+- changing any will reset your un-ended connections
 
 Dealbreakers (must also choose what is acceptable)
 - Smokes (yes, occasionally, no)
