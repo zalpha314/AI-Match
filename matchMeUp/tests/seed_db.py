@@ -8,7 +8,7 @@ from pony.orm.core import db_session
 from matchMeUp import db
 from matchMeUp.models.arguments import RatingEnum
 from matchMeUp.models.orm import define_entities
-from matchMeUp.models.qualities import Gender
+from matchMeUp.models.qualities import Gender, UserLevel
 from matchMeUp.services.match_service import MatchService
 from matchMeUp.services.user_service import UserService
 
@@ -20,7 +20,7 @@ class SeedDb():
         self._user_service = UserService(db_in_use)
 
     def create_user(self, username, gender_enum, birth_date='1991-12-5'):
-        self._user_service.create_user(
+        return self._user_service.create_user(
             username,
             '{}@foo.com'.format(username),
             username,
@@ -32,7 +32,9 @@ class SeedDb():
 
     @db_session
     def seed(self):
-        self.create_user('andrew', Gender.male)
+        andrew = self.create_user('andrew', Gender.male)
+        andrew.user_level = UserLevel.admin.value
+
         self.create_user('claire', Gender.female)
         self.create_user('jessica', Gender.female)
         self.create_user('miranda', Gender.female)

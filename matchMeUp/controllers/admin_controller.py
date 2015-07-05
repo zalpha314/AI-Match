@@ -8,6 +8,7 @@ from flask.templating import render_template
 from pony.orm.core import db_session
 
 from matchMeUp import app, db
+from matchMeUp.controllers import admin
 from matchMeUp.services.connection_service import ConnectionService
 from matchMeUp.services.user_service import UserService
 
@@ -19,6 +20,7 @@ connection_service = ConnectionService()
 @app.route('/admin/users', methods=['GET'])
 @db_session
 @login_required
+@admin
 def list_users():
     return render_template(
         'admin/users/list.html',
@@ -29,6 +31,7 @@ def list_users():
 @app.route('/admin/users/<int:user_id>/connections', methods=['GET'])
 @db_session
 @login_required
+@admin
 def list_connections(user_id):
     user = user_service.get_user(user_id)
     return render_template(

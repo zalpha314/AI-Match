@@ -110,3 +110,11 @@ class ConnectionStatusEnum(Enum):
     contact_queued = 'Queued for Contact'
     in_contact = 'In Contact'
     blocked = 'Blocked'
+
+
+class UserLevel(Enum):
+    banned = 1
+    suspended = 2
+    standard = 3
+    moderator = 4
+    admin = 5

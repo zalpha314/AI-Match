@@ -23,6 +23,7 @@ def define_entities(db):
         pw_hash = Required(str)
         username = Required(str, unique=True)
         authenticated = Optional(bool)
+        user_level = Required(int)
 
         # Required Profile
         birth_date = Required(date)

@@ -9,6 +9,8 @@ from flask.ext.login import (login_user, logout_user, current_user)
 from passlib.apps import custom_app_context
 from pony.orm.core import ObjectNotFound
 
+from matchMeUp.models.qualities import UserLevel
+
 
 class UserService():
 
@@ -26,6 +28,7 @@ class UserService():
             username=username,
             email=email,
             pw_hash=pw_hash,
+            user_level=UserLevel.standard.value,
             birth_date=birth_date,
             gender=gender_enum.value,
             last_activity=datetime.utcnow(),
