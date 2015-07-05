@@ -1,0 +1,27 @@
+{% extends 'logged_in_parent.html' %}
+
+{% block title %}Request Profiles{% endblock %}
+
+
+{% block body %}
+
+	{% if next_prospect is none %}
+		Sorry, you do not have any more matches
+	{% else %}
+		Do you think <b>{{next_prospect.username}}</b> is attractive?<br/>
+
+		If you think so, you will request access to their profile.<br/>
+
+		<form action="" method="post">
+			<input type="hidden" name="prospect_id" value="{{next_prospect.id}}"/>
+			<select name="rating">
+				<option value="notAtAll">Not at All</option>
+				<option value="no">No</option>
+				<option value="yes">Yes</option>
+				<option value="very">Very</option>
+			</select>
+			<input type="submit" value="Submit"/>
+		</form>
+	{% endif %}
+
+{% endblock %}

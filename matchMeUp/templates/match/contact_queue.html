@@ -1,0 +1,24 @@
+{% extends 'logged_in_parent.html' %}
+
+{% block title %}Request Contact{% endblock %}
+
+{% block body %}
+
+	{% if next_prospect is none %}
+		Sorry, you do not have any more matches
+	{% else %}
+		You have been given access to view <b>{{next_prospect.username}}</b>'s profile.<br/>
+
+		Take a look at their profile, and if you think they'd be a good match, send them a contact request!
+
+		<form action="" method="post">
+			<input type="hidden" name="prospect_id" value="{{next_prospect.id}}"/>
+			<select name="request_contact">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</select>
+			<input type="submit" value="Submit"/>
+		</form>
+	{% endif %}
+
+{% endblock %}

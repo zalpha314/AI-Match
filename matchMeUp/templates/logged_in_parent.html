@@ -1,0 +1,72 @@
+{% extends "parent.html" %}
+
+{% block header %}
+<h1>{{page_title}}</h1> {# this doesn't work #}
+
+<div id="navbar">
+	{{current_user.username}}, 
+	<a href="/">Home</a>
+	<a href="/match/profiles">Request Profiles</a>
+	<a href="/match/contacts">Request Contact</a>
+	<form action="/logout" method="POST" style="display: inline;">
+		<input type="submit" value="Logout"/>
+	</form>
+</div>
+
+	<div id="profile_request_out">
+		<b>Profile Requests out:</b>
+		{% for user in current_user.profile_requests_out %}
+			{{ user.username }},
+		{% endfor %}
+	</div>
+
+	<div id="profiel_requests_in">
+		<b>Profile Requests in:</b>
+		{% for user in current_user.profile_requests_in %}
+			{{user.username}},
+		{% endfor %}
+	</div>
+
+	<div id="profile_contacts">
+		<b>Profile Contacts:</b>
+		{% for user in current_user.profile_contacts %}
+			{{ user.username }},
+		{% endfor %}
+	</div>
+
+	<div id="contes">
+		<b>Contact Requests out:</b>
+		{% for user in current_user.contact_requests_out %}
+			{{ user.username }},
+		{% endfor %}
+	</div>
+
+	<div id="profile_contacts">
+		<b>Contact Requests in:</b>
+		{% for user in current_user.contect_requests_in %}
+			{{ user.username }},
+		{% endfor %}
+	</div>
+
+	<div id="contacts_queue">
+		<b>Contacts Queue:</b>
+		{% for user in current_user.contacts_queue %}
+			{{ user.username }},
+		{% endfor %}
+	</div>
+
+	<div id="contact">
+		<b>Contact:</b> {{current_user.contact.username}}
+	</div>
+
+	<div id="blocked">
+		<b>Blocked:</b>
+		{% for user in current_user.blocked %}
+			{{ user.username }}
+		{% endfor %}
+	</div>
+
+
+
+{% endblock %}
+

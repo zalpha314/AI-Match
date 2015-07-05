@@ -1,0 +1,43 @@
+{% extends "parent.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+
+<h1>Register</h1>
+
+<form action="register" method="POST">
+  <input id="gps_lat" type="hidden" name="gps_lat"/>
+  <input id="gps_lon" type="hidden" name="gps_lon"/>
+	Username: <input type="text" name="username" required/><br/>
+	Email Address: <input type="email" name="email" required/><br/>
+	Password: <input type="password" name="password" required/><br/>
+	Confirm Password: <input type="password" name="confirm_password" required/><br/>
+  Gender:
+  <select name="gender">
+    {% for id, value in gender_choices %}
+      <option value="{{id}}">{{value}}</option>
+    {% endfor %}
+  </select><br/>
+	Date of Birth: <input type="date" name="birth_date" required/><br/>
+	<input type="submit" value="Register"/>
+</form>
+
+<p id="gps_result" style="display: none;">
+  Your <b>GPS location</b> has been <b>logged</b> to help determine your local matches.<br/>
+  You can re-sync your location later, but you should register from home.
+</p>
+
+<script type="application/javascript">
+  $(document).ready(function() {
+    // Set GPS location in register form on page load
+    navigator.geolocation.getCurrentPosition(function(location){
+      $('#gps_lat').val(location.coords.latitude);
+      $('#gps_lon').val(location.coords.longitude);
+      // TODO, replace with AJAX call to get postal code of coordinates
+      $('#gps_result').show();
+    });
+  });
+</script>
+
+{% endblock %}

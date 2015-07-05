@@ -1,0 +1,25 @@
+{% extends "parent.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<h1>MatchMeUp</h1>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form action="/login" method="post">
+	Username: <input type="text" name="username" required/><br/>
+	Password: <input type="password" name="password" required/><br/>
+	<input type="submit" value="Login"/>
+</form><br/>
+or<br/>
+<a href="/register">Register</a>
+{% endblock %}
