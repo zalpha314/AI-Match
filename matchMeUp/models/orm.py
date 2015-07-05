@@ -191,4 +191,7 @@ def define_entities(db):
         def get_status(self):
             return ConnectionStatusEnum(self.status)
 
+        def get_other(self, user):
+            return self.users[0] if self.users[0] is user else self.users[1]
+
     db.generate_mapping(check_tables=True, create_tables=True)
