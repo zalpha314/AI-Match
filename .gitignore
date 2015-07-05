@@ -1,2 +1,4 @@
 .project
 .pydevproject
+*/dev-db
+*__pycache__*
