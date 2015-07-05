@@ -1,0 +1,13 @@
+{% extends 'logged_in_parent.html' %}
+
+{% block title %}Admin - Connection View{% endblock %}
+
+{% block body %}
+<h1>Admin Connection View</h1>
+
+Currently viewing connections for: <b>{{user.username}}<br/>
+<br/>
+
+<b>Profile Contacts:</b> {% for user in profile_contacts %} {{user.username}}, {% endfor %}<br/>
+<b>Contacts:</b> {% for user in contacts %} {{user.username}}, {% endfor %}
+{% endblock %}

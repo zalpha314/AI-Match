@@ -1,0 +1,16 @@
+{% extends 'logged_in_parent.html' %}
+
+{% block title %}Admin - Connection View{% endblock %}
+
+<h1>Admin Connection View<h1>
+
+{% block body %}
+
+<table>
+	<tr><th>User</th><th>Connections</th></tr>
+	{% for user in users %}
+		<tr><td>{{user.username}}</td><td><a href="users/{{user.id}}/connections">Connections</a></td></tr>
+	{% endfor %}
+</table>
+
+{% endblock %}

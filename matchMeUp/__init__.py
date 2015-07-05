@@ -1,6 +1,5 @@
 from flask import Flask
 from flask.ext.login import LoginManager
-
 from pony.orm import Database
 
 app = Flask(__name__)
@@ -13,6 +12,6 @@ login_manager.init_app(app)
 
 db = Database('sqlite', 'dev-db', create_db=True)
 
-
+import matchMeUp.controllers.admin_controller
 import matchMeUp.controllers.login_controller
 import matchMeUp.controllers.match_controller

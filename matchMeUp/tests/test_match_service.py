@@ -109,6 +109,7 @@ class TestMatchService(unittest.TestCase):
         u2 = service.get_next_profile_prospect(u1)
         self.assertIsNotNone(u1)
         self.assertIsNotNone(u2)
+        self.assertNotEqual(u1, u2)
         self._check_connection(u1, u2, ConnectionStatusEnum.no_interaction)
         return (u1, u2)
 

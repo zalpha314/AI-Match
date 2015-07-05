@@ -9,9 +9,8 @@ from pony.orm.core import db_session
 
 from matchMeUp import app, db
 from matchMeUp.models.arguments import RatingEnum
-
-from matchMeUp.services.user_service import UserService
 from matchMeUp.services.match_service import MatchService
+from matchMeUp.services.user_service import UserService
 
 
 user_service = UserService(db)
@@ -52,7 +51,7 @@ def do_profile_requests():
 def contact_requests():
     from_user = user_service.get_user(current_user.id)
 
-    if from_user.is_contact_slot_available():
+    if match_service.is_contact_slot_available(from_user):
         return render_template(
                 'match/contact_queue.html',
                 next_prospect=match_service.next_contact_prospect(from_user)

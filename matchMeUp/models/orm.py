@@ -46,16 +46,6 @@ def define_entities(db):
         ratings_out = Set('Rating', reverse='from_user')
 
         # Connections
-        '''
-        profile_requests_out = Set('User', reverse='profile_requests_in')
-        profile_requests_in = Set("User", reverse='profile_requests_out')
-        profile_contacts = Set('User', reverse='profile_contacts')
-        contact_requests_in = Set('User', reverse='contact_requests_out')
-        contact_requests_out = Set('User', reverse='contact_requests_in')
-        contacts_queue = Set('User', reverse='contacts_queue')
-        contacts = Set('User', reverse='contacts')
-        blocked = Set('User', reverse='blocked')
-        '''
         connected_to = Set('User', reverse='connected_to')
         connections = Set('Connection', reverse='users')
         requests_out = Set('Connection', reverse='requester')
@@ -192,6 +182,7 @@ def define_entities(db):
             return ConnectionStatusEnum(self.status)
 
         def get_other(self, user):
-            return self.users[0] if self.users[0] is user else self.users[1]
+            users = list(self.users)
+            return users[1] if users[0] is user else users[0]
 
     db.generate_mapping(check_tables=True, create_tables=True)

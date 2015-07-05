@@ -3,7 +3,7 @@ Created on Jun 27, 2015
 
 @author: Andrew
 '''
-from pony.orm.core import select, count
+from pony.orm.core import count
 from matchMeUp.models.arguments import RatingEnum
 from matchMeUp.models.qualities import ConnectionStatusEnum
 
@@ -78,8 +78,8 @@ class MatchService():
 
             # Try to pop contact from queue
             if (
-                    self._is_contact_slot_available(from_user) and
-                    self._is_contact_slot_available(to_user)
+                    self.is_contact_slot_available(from_user) and
+                    self.is_contact_slot_available(to_user)
             ):
                 connection.set_status(ConnectionStatusEnum.in_contact)
         else:
@@ -106,7 +106,7 @@ class MatchService():
 
         return self._db.Connection.create(user1, user2)
 
-    def _is_contact_slot_available(self, user):
+    def is_contact_slot_available(self, user):
         num_contacts = count(
                 c for c in self._db.Connection
                 if user in c.users and

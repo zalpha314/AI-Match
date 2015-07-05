@@ -5,8 +5,8 @@ Created on Jun 27, 2015
 '''
 from datetime import datetime
 
-from passlib.apps import custom_app_context
 from flask.ext.login import (login_user, logout_user, current_user)
+from passlib.apps import custom_app_context
 from pony.orm.core import ObjectNotFound
 
 
@@ -62,3 +62,6 @@ class UserService():
 
     def update_password(self, user, new_password):
         user.pw_hash = custom_app_context.encrypt(new_password)
+
+    def get_users(self):
+        return self._db.User.select()
