@@ -85,7 +85,7 @@ Contact Meta (show only when in contact)
   - you will have to wait until you both have an open slot to get in contact
   - you cannot see who you are queued to talk to
 ## Step 4: In Contact
-  - you only have 3 contact slots available (you will see this counter)
+  - you only have 1 contact slot available
     - You must end contact with someone to get another contact
   - You will get a notification when you get a contact or message
 ## Step 5: End Contact
@@ -126,5 +126,5 @@ Bans
 - Python
 - Flask
 - Database: MySQL or PostgreSQL
-- ORM: SPony ORM
+- ORM: Pony ORM
   
