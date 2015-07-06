@@ -51,6 +51,11 @@ def define_entities(db):
         connections = Set('Connection', reverse='users')
         requests_out = Set('Connection', reverse='requester')
 
+        # Messages
+        message_threads = Set('MessageThread', reverse='users')
+        messages_out = Set('Message', reverse='from_user')
+        messages_in = Set('Message', reverse='to_user')
+
         ''' Required by Flask-login '''
         def is_authenticated(self):
             return self.authenticated
@@ -183,7 +188,20 @@ def define_entities(db):
             return ConnectionStatusEnum(self.status)
 
         def get_other(self, user):
-            users = list(self.users)
-            return users[1] if users[0] is user else users[0]
+            for u in self.users:
+                if u != user:
+                    return u
+
+    class MessageThread(db.Entity):
+        messages = Set('Message', reverse='thread')
+        users = Set('User', reverse='message_threads')
+
+    class Message(db.Entity):
+        thread = Set(MessageThread, reverse='messages')
+        from_user = Required(User)
+        to_user = Required(User)
+        text = Required(LongStr)
+        sent_on = Required(datetime)
+        read = Optional(bool)
 
     db.generate_mapping(check_tables=True, create_tables=True)

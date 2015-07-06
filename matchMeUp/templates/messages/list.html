@@ -1,0 +1,19 @@
+{% extends "logged_in_parent.html" %}
+
+{% block title %}Contacts{% endblock %}
+
+{% block body %}
+<h1>Contacts</h1>
+
+{% if not contacts %}
+	<p>
+		Sorry, but you don't have a contact yet.<br/>
+		Keep playing the <b>matching game</b> to get one!
+	</p>
+{% else %}
+	{% for contact in contacts %}
+		Contact: <a href="/messages/{{contact.id}}">{{contact.username}}</a><br/>
+	{% endfor %}
+{% endif %}
+
+{% endblock %}

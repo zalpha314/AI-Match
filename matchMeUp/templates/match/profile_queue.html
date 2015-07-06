@@ -6,21 +6,15 @@
 {% block body %}
 
 	{% if next_prospect is none %}
-		Sorry, you do not have any more matches
+		You're out of matches.  Check back later!
 	{% else %}
-		Do you think <b>{{next_prospect.username}}</b> is attractive?<br/>
-
-		If you think so, you will request access to their profile.<br/>
+		We think <b>{{next_prospect.username}}</b> might be a good match for you!<br/>
 
 		<form action="" method="post">
+			Request their Profile?
 			<input type="hidden" name="prospect_id" value="{{next_prospect.id}}"/>
-			<select name="rating">
-				<option value="notAtAll">Not at All</option>
-				<option value="no">No</option>
-				<option value="yes">Yes</option>
-				<option value="very">Very</option>
-			</select>
-			<input type="submit" value="Submit"/>
+			<button type="submit" name="request_profile" value="1">Yes</button>
+			<button type="submit" name="request_profile" value="0">No</button>
 		</form>
 	{% endif %}
 

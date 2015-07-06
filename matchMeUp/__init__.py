@@ -15,3 +15,4 @@ db = Database('sqlite', 'dev-db', create_db=True)
 import matchMeUp.controllers.admin_controller
 import matchMeUp.controllers.login_controller
 import matchMeUp.controllers.match_controller
+import matchMeUp.controllers.messages_controller

@@ -1,0 +1,41 @@
+{% extends "logged_in_parent.html" %}
+
+{% block title %}Messages with {{contact.username}}{% endblock %}
+
+{% block body %}
+<h1>Messages with {{contact.username}}</h1>
+
+{% if not messages %}
+	<p>
+		No messages yet.  How about you send one?
+	</p>
+{% else %}
+	{% for message in messages %}
+		<div class="message">
+			<p>
+				{{message.from_user.username}}:
+				<div class="message-text">
+					{{message.text}}
+				</div>
+				<abbr class="timeago" title="{{message.sent_on}}"></abbr>
+			</p>
+		</div>
+	{% endfor %}
+{% endif %}
+
+
+<div id="message_draft" name="message">
+	<form method="POST">
+		<input type="hidden" name="foo" value="bar"/>
+		<textarea rows="8", cols="80" name="message" autofocus required placeholder="Write them a nice message.  Be creative, and tailor it to their profile."></textarea><br/>
+		<input type="submit" value="Send"/>
+	</form>
+</div>
+
+<script type="application/javascript">
+	$(document).ready(function() {
+	  $("abbr.timeago").timeago();
+	});
+</script>
+
+{% endblock %}

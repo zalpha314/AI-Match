@@ -4,10 +4,11 @@ Created on Jun 27, 2015
 @author: Andrew
 '''
 from flask import render_template, request, redirect, url_for, flash
-from flask.ext.login import login_required, current_user
+from flask.ext.login import login_required
 from pony.orm.core import db_session
 
 from matchMeUp import app, db
+from matchMeUp.controllers import get_current_user
 from matchMeUp.models.arguments import RatingEnum
 from matchMeUp.services.match_service import MatchService
 from matchMeUp.services.user_service import UserService
@@ -21,9 +22,10 @@ match_service = MatchService(db)
 @db_session
 @login_required
 def profile_requests():
+    user = get_current_user()
     return render_template(
             'match/profile_queue.html',
-            next_prospect=match_service.get_next_profile_prospect(current_user)
+            next_prospect=match_service.get_next_profile_prospect(user)
     )
 
 
@@ -33,7 +35,7 @@ def profile_requests():
 def do_profile_requests():
     prospect_id = int(request.form['prospect_id'])
     prospect = user_service.get_user(prospect_id)
-    from_user = user_service.get_user(current_user.id)
+    from_user = get_current_user()
 
     rating_arg = request.form['rating']
     try:
@@ -49,7 +51,7 @@ def do_profile_requests():
 @db_session
 @login_required
 def contact_requests():
-    from_user = user_service.get_user(current_user.id)
+    from_user = get_current_user()
 
     if match_service.is_contact_slot_available(from_user):
         return render_template(
@@ -67,7 +69,7 @@ def contact_requests():
 def do_contact_request():
     prospect_id = int(request.form['prospect_id'])
     prospect = user_service.get_user(prospect_id)
-    from_user = user_service.get_user(current_user.id)
+    from_user = get_current_user()
     request_contact = bool(int(request.form['request_contact']))
 
     if request_contact:

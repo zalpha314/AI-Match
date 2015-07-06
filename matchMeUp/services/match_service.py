@@ -6,8 +6,11 @@ Created on Jun 27, 2015
 from pony.orm.core import count
 from matchMeUp.models.arguments import RatingEnum
 from matchMeUp.models.qualities import ConnectionStatusEnum
+from matchMeUp.services.connection_service import ConnectionService
 
 NUM_CONTACT_SLOTS = 1
+
+connection_service = ConnectionService()
 
 
 class MatchService():
@@ -17,15 +20,8 @@ class MatchService():
 
     def get_next_profile_prospect(self, user):
         # First search for users that have requested your profile
-        results = self._db.Connection.select(
-            lambda c:
-            user in c.users and
-            c.status == ConnectionStatusEnum.profile_requested.value and
-            c.requester is not user
-        )
-        if results.exists():
-            users = results[:1][0].users
-            return users[0] if users[0] is not user else users[1]
+        for request_in in connection_service.get_profile_requests_in(user):
+            return request_in
 
         # Get user that has not requested your profile
         results = self._db.User.select(
@@ -81,6 +77,7 @@ class MatchService():
                     self.is_contact_slot_available(from_user) and
                     self.is_contact_slot_available(to_user)
             ):
+                # Create Contact and MessageThread
                 connection.set_status(ConnectionStatusEnum.in_contact)
         else:
             connection.set_status(ConnectionStatusEnum.contact_requested)
@@ -90,14 +87,6 @@ class MatchService():
         connection = self._get_connection(from_user, user_to_block)
         connection.set_status(ConnectionStatusEnum.blocked)
         connection.requester = from_user
-
-    def get_contacts(self, user):
-        contact_connections = self._db.Connection.select(
-            lambda c:
-            user in c.users and
-            c.status is ConnectionStatusEnum.in_contact
-        )
-        return (c.get_other(user) for c in contact_connections)
 
     def _get_connection(self, user1, user2):
         for c in user1.connections:
