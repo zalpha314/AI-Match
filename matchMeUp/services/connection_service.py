@@ -20,6 +20,14 @@ out_only = ConnectionFilterEnum.out_only
 
 class ConnectionService():
 
+    def can_view_profile(self, user, view_user):
+        return (
+                view_user == user or
+                user.is_admin() or
+                view_user in self.get_profile_contacts(user) or
+                view_user in self.get_contacts(user)
+                )
+
     def get_profile_requests_in(self, user):
         return self._get_connected_user(
             user, ConnectionStatusEnum.profile_requested, in_only)
@@ -35,6 +43,10 @@ class ConnectionService():
     def get_contacts(self, user):
         return self._get_connected_user(
             user, ConnectionStatusEnum.in_contact, no_filter)
+
+    def is_blocked(self, user1, user2):
+        return user1 in self._get_connected_user(
+                user2, ConnectionStatusEnum.blocked, no_filter)
 
     def _get_connected_user(self, user, state_enum, filter_enum):
         return (

@@ -13,7 +13,7 @@ user_service = UserService(db)
 def admin(view):
     @functools.wraps(view)
     def inner(*args, **kwargs):
-        if current_user.user_level >= UserLevel.admin.value:
+        if current_user.is_admin():
             return view(*args, **kwargs)
         else:
             flash('You do not have sufficient rights to view that page')

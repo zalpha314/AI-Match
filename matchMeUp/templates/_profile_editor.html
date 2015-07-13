@@ -1,0 +1,63 @@
+{#
+requires the following arguments:
+	- label
+	- title
+	- content
+	- content_hint
+
+requires the following environment:
+	- user
+	- current_user
+#}
+<div class="panel panel-default">
+	 
+	<div class="panel-heading"><h4>{{title}}</h4></div>
+
+	<div id="{{label}}-view">
+		<p class="panel-body">
+			<div id="{{label}}-text">
+				{% if content %}
+					{{content}}
+				{% else %}
+					<i>{{content_hint}}</i>
+				{% endif %}
+			</div>
+			{% if current_user == user %}<a id="{{label}}-edit-button" href="#"><span class="glyphicon glyphicon-pencil"/></a>{% endif %}
+		</p>
+	</div>
+
+	{% if current_user == user %}
+		<form id="{{label}}-form">
+			<input type="hidden" name="label" value="{{label}}"/>
+			<div class="row">
+				<textarea name="value" cols="80" rows="5" placeholder="{{content_hint}}">{{content}}</textarea>
+			</div>
+			<div class="row">
+				<button id="{{label}}-cancel">Cancel</button><button type="submit">Update</button>
+			</div>
+		</form>
+	{% endif %}
+
+	<script type="application/javascript">
+		$("#{{label}}-form").ajaxForm(
+			{
+				url: "{{url_for('update_profile_section')}}",
+				type: 'post',
+				success: function(response){
+					updateSection("{{label}}", response.newValue);
+				}
+			}
+		);
+
+		$("#{{label}}-cancel").click(function(event){
+			event.preventDefault();
+			setEditable("{{label}}", false);
+		});
+
+		$("#{{label}}-edit-button").click(function(){
+			setEditable("{{label}}", true);
+		});
+
+		setEditable("{{label}}", false);
+	</script>
+</div>

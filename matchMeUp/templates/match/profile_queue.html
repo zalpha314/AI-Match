@@ -4,18 +4,33 @@
 
 
 {% block body %}
+<div class="row">
 
-	{% if next_prospect is none %}
-		You're out of matches.  Check back later!
-	{% else %}
-		We think <b>{{next_prospect.username}}</b> might be a good match for you!<br/>
+	<!-- Left Margin -->
+	<div class="col-md-4"></div>
 
-		<form action="" method="post">
-			Request their Profile?
-			<input type="hidden" name="prospect_id" value="{{next_prospect.id}}"/>
-			<button type="submit" name="request_profile" value="1">Yes</button>
-			<button type="submit" name="request_profile" value="0">No</button>
-		</form>
-	{% endif %}
+	<div class="col-md-4">
+		{% if next_prospect is none %}
+			You're out of matches.  Check back later!
+		{% else %}
+			<!-- Prospect name and photo -->
+			<div class="row text-center">
+				<p>We think <b>{{next_prospect.username}}</b> might be a good match for you!</p>
+				<img src="{{next_prospect.get_main_photo().get_url()}}"/>
+				<p>Want to request their Profile?</p>
+			</div>
+			<!-- Yes/No Buttons -->
+			<div class="row">
+				<form action="" method="post">
+					<input type="hidden" name="prospect_id" value="{{next_prospect.id}}"/>
+					{% include '/match/_yes_no_buttons.html' %}
+				</form>
+			</div>
+		{% endif %}
+	</div>
+
+	<!-- Right Margin -->
+	<div class="col-md-4"></div>
+</div>
 
 {% endblock %}

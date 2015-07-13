@@ -3,7 +3,7 @@ Created on Jul 5, 2015
 
 @author: Andrew
 '''
-from flask import request, redirect, url_for
+from flask import request, redirect
 from flask.ext.login import login_required, current_user
 from flask.templating import render_template
 from pony.orm.core import db_session
@@ -27,9 +27,9 @@ messages_service = MessagesService(db)
 @login_required
 def contacts():
     return render_template(
-            'messages/list.html',
-            contacts=connection_service.get_contacts(current_user)
-            )
+        'messages/list.html',
+        contacts=connection_service.get_contacts(current_user)
+        )
 
 
 @app.route('/messages/<int:contact_id>', methods=['GET'])

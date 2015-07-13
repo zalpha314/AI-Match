@@ -30,7 +30,7 @@ class UserService():
             pw_hash=pw_hash,
             user_level=UserLevel.standard.value,
             birth_date=birth_date,
-            gender=gender_enum.value,
+            gender=gender_enum.name,
             last_activity=datetime.utcnow(),
             gps_lat=gps_lat,
             gps_lon=gps_lon

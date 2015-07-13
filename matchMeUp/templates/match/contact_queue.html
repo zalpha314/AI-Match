@@ -7,18 +7,22 @@
 	{% if next_prospect is none %}
 		Sorry, you do not have any more matches
 	{% else %}
-		You have been given access to view <b>{{next_prospect.username}}</b>'s profile.<br/>
+		{% set user = next_prospect %}
+		<div class="row">
+			{% include '_profile.html' %}
+		</div>
+		<div class="row">
+			<div class="col-md-4"></div>
+			<div class="col-md-4">
+				<p class="text-center">Want to send a contact request?</p>
+				<form action="{{url_for('do_contact_request')}}" method="POST">
+					<input type="hidden" name="user-id" value="{{user.id}}"/>
+					{% include '/match/_yes_no_buttons.html' %}
+				</form>
+			</div>
+			<div class="col-md-4"></div>
+		</div>
 
-		Take a look at their profile, and if you think they'd be a good match, send them a contact request!
-
-		<form action="" method="post">
-			<input type="hidden" name="prospect_id" value="{{next_prospect.id}}"/>
-			<select name="request_contact">
-				<option value="0">No</option>
-				<option value="1">Yes</option>
-			</select>
-			<input type="submit" value="Submit"/>
-		</form>
 	{% endif %}
 
 {% endblock %}

@@ -7,9 +7,9 @@
 {% block body %}
 
 <table>
-	<tr><th>User</th><th>Connections</th></tr>
+	<tr><th>User</th><th>Profile</th><th>Connections</th></tr>
 	{% for user in users %}
-		<tr><td>{{user.username}}</td><td><a href="users/{{user.id}}/connections">Connections</a></td></tr>
+		<tr><td>{{user.username}}</td><td><a href="/profile/{{user.id}}">Profile</a><td><a href="users/{{user.id}}/connections">Connections</a></td></tr>
 	{% endfor %}
 </table>
 

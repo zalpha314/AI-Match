@@ -1,0 +1,221 @@
+{% extends 'logged_in_parent.html' %}
+{% import 'widgets/_forms.html' as forms %}
+
+{% block title %}Match Settings{% endblock %}
+
+{% block body %}
+<!-- Settings -->
+<div class="row">
+	<!-- Headers -->
+	<div class="row">
+		<div class="col-md-2">
+		</div>
+		<div class="col-md-5 panel panel-default">
+			<h2>Myself</h2>
+		</div>
+
+		<div class="col-md-5 panel panel-default">
+			<h2>My Ideal Match</h2>
+		</div>
+	</div>
+
+	<!-- Seeking -->
+	<div class="row">
+		<div class="col-md-2">
+			<h3>Seeking</h3>
+		</div>
+		<div class="col-md-5 panel panel-default">
+			I am a <b>{{current_user.get_age()}}</b> year-old <b>{{current_user.get_gender().display_name}}</b>.
+		</div>
+		<div class="col-md-5 panel panel-default">
+			{% if current_user.seeking %}
+				My match must be a 
+				{% for gender in current_user.get_attractions() %}<b>{{gender.display_name}}</b>, {% endfor %}
+				between the age of <b>{{current_user.seeking.get_min_age()}}</b> and <b>{{current_user.seeking.get_max_age()}}</b>,
+				who is looking for <b>{{current_user.seeking.looking_for}}</b> that is <b>{{current_user.seeking.exclusivity}}</b>.
+			{% else %}
+				{% with message='Please choose what you are seeking' %}
+					{% include '/widgets/_error_message.html' %}
+				{% endwith %}
+			{% endif %}
+			<a href="#" data-toggle="modal" data-target="#seeking-modal"><span class="glyphicon glyphicon-pencil"/></a>
+		</div>
+	</div>
+
+	<!-- Dealbreakers -->
+	<div class="row">
+		<div class="col-md-2">
+			<h3>Required Traits</h3>
+		</div>
+		<div class="col-md-5 panel panel-default">
+			{% set mine = current_user.my_deal_breakers %}
+			{% if mine %}
+				{{ dict_to_table(
+					['Trait', 'Chosen'],
+					{
+						'Smokes': mine.get_smokes().value,
+						'Drugs': mine.get_drugs().value,
+						'Drinks': mine.get_drinks().value,
+						'Has Kids': mine.get_has_kids().value,
+						'Lives': mine.get_living_with().value
+					}
+				) }}
+			{% else %}
+				{% with message='Please enter your own traits.' %}
+					{% include '/widgets/_error_message.html' %}
+				{% endwith %}
+			{% endif %}
+			<a href="#" data-toggle="modal" data-target="#my-dealbreakers-modal"><span class="glyphicon glyphicon-pencil"/></a>
+		</div>
+		<div class="col-md-5 panel panel-default">
+			{% set match = current_user.match_deal_breakers %}
+			{% if match %}
+				{{ dict_to_table(
+					['Trait', 'Required'],
+					{
+						'Smokes': match.get_smokes(),
+						'Drugs': match.get_drugs(),
+						'Drinks': match.get_drinks(),
+						'Has Kids': match.get_has_kids(),
+						'Lives': match.get_living_with()
+					}
+				) }}
+			{% else %}
+				{% with message='Please enter your match\'s required traits.' %}
+					{% include '/widgets/_error_message.html' %}
+				{% endwith %}
+			{% endif %}
+			<a href="#" data-toggle="modal" data-target="#match-dealbreakers-modal"><span class="glyphicon glyphicon-pencil"/></a>
+		</div>
+	</div>
+</div>
+
+<!-- Seeking Modal -->
+<div id="seeking-modal" class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Seeking</h4>
+			</div>
+			<form action="{{url_for('set_match_settings_seeking')}}" method="POST">
+				<div class="modal-body">
+					<div class="row">
+						I am attracted to:
+						<select name="attracted-to" multiple>
+							{% for gender in attraction_options %}
+								<option value="{{gender.name}}" {{'selected' if gender in current_user.get_attractions() else ''}}>{{gender.plural}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="row">
+						I am looking for {{ forms.selector('looking-for', looking_for_options, selected=current_user.seeking.get_looking_for()) }}
+						that is {{ forms.selector('exclusivity', exclusivity_options, selected=current_user.seeking.get_exclusivity()) }}.
+					</div>
+					<div class="row">
+						My match should be at most:<br/>
+						<input type="number" name="years-below" value="{{current_user.seeking.years_below}}" min="0" max="{{current_user.seeking.get_min_years_below()}}"/> year(s) younger or
+						<input type="number" name="years-above" value="{{current_user.seeking.years_above}}" min="0" max="20"/> year(s) older.<br/>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- My Dealbreakers Modal -->
+<div id="my-dealbreakers-modal" class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">My Traits</h4>
+			</div>
+			<form action="{{url_for('set_match_settings_my_dealbreakers')}}" method="POST">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-6">
+							<h4>{{header}}</h4>
+							{% set mine = current_user.my_deal_breakers %}
+							<div class="row">
+								Smokes: {{ forms.selector('smokes', smokes_options, selected=mine.get_smokes()) }}
+							</div>
+							<div class="row">
+								Drugs: {{ forms.selector('drugs', drugs_options, selected=mine.get_drugs()) }}
+							</div>
+							<div class="drinks">
+								Drinks: {{ forms.selector('drinks', drinks_options, selected=mine.get_drinks()) }}
+							</div>
+							<div class="row">
+								Kids: {{ forms.selector('has-kids', has_kids_options, selected=mine.get_has_kids()) }}
+							</div>
+							<div class="row">
+								Lives: {{ forms.selector('living-with', living_with_options, selected=mine.get_living_with()) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<!-- Match Dealbreakers Modal -->
+<div id="match-dealbreakers-modal" class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">My Match's Required Traits</h4>
+			</div>
+			<form action="{{url_for('set_match_settings_match_dealbreakers')}}" method="POST">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-6">
+							<h4>{{header}}</h4>
+							{% set match = current_user.match_deal_breakers %}
+							<div class="row">
+								Smokes: {{ forms.selector('smokes', smokes_options, selected=match.get_smokes() if match else None, multiple=true) }}
+							</div>
+							<div class="row">
+								Drugs: {{ forms.selector('drugs', drugs_options, selected=match.get_drugs() if match else None, multiple=true) }}
+							</div>
+							<div class="drinks">
+								Drinks: {{ forms.selector('drinks', drinks_options, selected=match.get_drinks() if match else None, multiple=true) }}
+							</div>
+							<div class="row">
+								Kids: {{ forms.selector('has-kids', has_kids_options, selected=match.get_has_kids() if match else None, multiple=true) }}
+							</div>
+							<div class="row">
+								Lives: {{ forms.selector('living-with', living_with_options, selected=match.get_living_with() if match else None, multiple=true) }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% macro dict_to_table(headers_list, data_dict) -%}
+	<table class="table">
+		<tr>{% for header in headers_list %}<th>{{header}}</th>{% endfor %}
+		{% for (key, value) in data_dict.items() %}
+			<tr><td>{{key}}</td><td>{{'' ~ value ~ ''}}</td></tr>
+		{% endfor %}
+	</table>
+{%- endmacro %}

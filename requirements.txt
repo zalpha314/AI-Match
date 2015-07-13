@@ -3,3 +3,4 @@ flask-login
 pony
 passlib
 validate_email
+inflect

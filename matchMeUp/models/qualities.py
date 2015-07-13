@@ -6,85 +6,85 @@ Created on Jun 26, 2015
 from enum import Enum
 
 
-class Gender(Enum):
-    male = ' Male'
-    female = 'Female'
-    male_born_as_female = 'Male born as Female'
-    female_born_as_male = 'Female born as Male'
+class Quality(Enum):
+
+    def as_dict(self):
+        return {'name': self.name, 'value': self.value}
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return self.value
 
 
-class EmploymentStatus(Enum):
+class GenderEnum(Quality):
+    male = ('Man', 'Men', 'he')
+    female = ('Woman', 'Women', 'she')
+    male_born_as_female = ('Man born as Woman', 'Men born as Women', 'he')
+    female_born_as_male = ('Woman born as Man', 'Women born as Men', 'she')
+
+    def __init__(self, display_name, plural, addressed_as):
+        self.display_name = display_name
+        self.plural = plural
+        self.addressed_as = addressed_as
+
+
+class EmploymentStatusEnum(Enum):
     unemployed = 'Unemployed'
-    student = 'Student'
-    part_time = 'Part-Time'
-    full_time = 'Full-Time'
+    student = 'a Student'
+    part_time = 'working Part-Time'
+    full_time = 'working Full-Time'
     self_employed = 'Self-Employed'
     retired = 'Retired'
 
 
-class LookingFor(Enum):
-    relationship = 'a Relationship'
-    dates = 'Dates, but no commitment'
-    adventures = 'an Adventure Buddy'
-    fwb = 'a Friend with Benefits'
+class LookingForEnum(Enum):
+    relationship = 'a Comitted Relationship'
+    dates = 'Dates, but not comitting to anything'
+    adventures = 'someone to go on adventures with'
+    fwb = 'a Cuddle Buddy or Friend with Benefits'
 
 
-class Priority(Enum):
-    seriously = 'Seriously'
-    casualy = 'Casualy'
+class ExclusivityEnum(Enum):
+    yes = 'Exclusive'
+    no = 'Non-Exclusive'
 
 
-class Monogamy(Enum):
-    mono = 'Monogamous'
-    neutral = 'Neutral'
-    prom = 'Promiscuous'
-
-
-class RelationshipStatus(Enum):
-    single = 'Single'
-    inRelationship = 'In a Relationship'
-    married = 'Married'
-
-
-class Smokes(Enum):
+class SmokesEnum(Quality):
     yes = 'Yes'
     occasionally = 'Occasionally'
     no = 'No'
 
 
-class Drugs(Enum):
+class DrugsEnum(Quality):
     yes = 'Yes'
     soft = '"Soft" drugs only'
     no = 'No'
 
 
-class Drinks(Enum):
+class DrinksEnum(Quality):
     excessively = 'Excessively'
     often = 'Often'
     socially = 'Socially'
     rarely = 'Rarely'
-    no = 'No'
+    no = 'Never'
 
 
-class HasKids(Enum):
+class HasKidsEnum(Quality):
     yes = 'Yes'
     legal = 'Yes, but all over 18'
     no = 'No'
 
 
-class WantsKids(Enum):
-    yes = 'Yes'
-    maybe = 'Maybe'
-    no = 'No'
-
-
-class ResidenceSituation(Enum):
-    withFamily = 'Living with Family'
-    withRoommate = 'Living with Roommate(s)'
+class LivingWithEnum(Quality):
+    with_family = 'Living with Family'
+    with_roommate = 'Living with Roommate(s)'
+    with_partner = 'Living with a Partner'
     alone = 'Living Alone'
 
 
-class Pet(Enum):
+class PetsEnum(Enum):
     cats = 'Cats'
     dogs = 'Dogs'
     birds = 'Birds'
@@ -94,7 +94,7 @@ class Pet(Enum):
 class Religion(Enum):
     non = 'Non-Religious'
     spiritual = 'Spiritual'
-    islam = 'Islamic'
+    islamic = 'Islamic'
     jewish = 'Jewish'
     christian = 'Christian'
     hindu = 'Hindu'
@@ -103,13 +103,13 @@ class Religion(Enum):
 
 
 class ConnectionStatusEnum(Enum):
-    no_interaction = 'No Interaction'
-    profile_requested = 'Profile Requested'
-    profile_access = "Profile Visible"
-    contact_requested = 'Contact Requested'
-    contact_queued = 'Queued for Contact'
-    in_contact = 'In Contact'
-    blocked = 'Blocked'
+    no_interaction = 0
+    profile_requested = 1
+    profile_access = 2
+    contact_requested = 3
+    contact_queued = 4
+    in_contact = 5
+    blocked = 6
 
 
 class UserLevel(Enum):

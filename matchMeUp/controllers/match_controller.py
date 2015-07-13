@@ -9,13 +9,14 @@ from pony.orm.core import db_session
 
 from matchMeUp import app, db
 from matchMeUp.controllers import get_current_user
-from matchMeUp.models.arguments import RatingEnum
+from matchMeUp.services.connection_service import ConnectionService
 from matchMeUp.services.match_service import MatchService
 from matchMeUp.services.user_service import UserService
 
 
 user_service = UserService(db)
 match_service = MatchService(db)
+connection_service = ConnectionService()
 
 
 @app.route('/match/profiles', methods=['GET'])
@@ -37,12 +38,8 @@ def do_profile_requests():
     prospect = user_service.get_user(prospect_id)
     from_user = get_current_user()
 
-    rating_arg = request.form['rating']
-    try:
-        rating_enum = RatingEnum[rating_arg]
-        match_service.rate_attractiveness(from_user, prospect, rating_enum)
-    except TypeError:
-        flash('Invalid rating: {}'.format(rating_arg))
+    request_profile = bool(int(request.form['request']))
+    match_service.rate_attractiveness(from_user, prospect, request_profile)
 
     return redirect(url_for('profile_requests'))
 
@@ -67,14 +64,29 @@ def contact_requests():
 @db_session
 @login_required
 def do_contact_request():
-    prospect_id = int(request.form['prospect_id'])
+    prospect_id = int(request.form['user-id'])
     prospect = user_service.get_user(prospect_id)
     from_user = get_current_user()
-    request_contact = bool(int(request.form['request_contact']))
 
+    request_contact = bool(int(request.form['request']))
     if request_contact:
         match_service.request_contact(from_user, prospect)
     else:
         match_service.block_user(from_user, prospect)
 
     return redirect(url_for('contact_requests'))
+
+
+@app.route('/match/block', methods=['POST'])
+@db_session
+@login_required
+def block():
+    # TODO: get reason
+    blocker = get_current_user()
+
+    to_block_id = int(request.form['user_id'])
+    to_block = user_service.get_user(to_block_id)
+
+    match_service.block_user(blocker, to_block)
+    flash('You have blocked {}'.format(to_block.username))
+    return redirect(url_for('index'))

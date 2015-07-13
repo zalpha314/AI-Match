@@ -1,0 +1,69 @@
+{% extends "logged_in_parent.html" %}
+
+{% block title %}{{user.username}}{% endblock %}
+
+{% block body %}
+
+<script type="application/javascript">
+	function setEditable(label, editable){
+		if (editable === true){
+			$("#" + label + "-view").hide();
+			$("#" + label + "-form").show();
+		} else {
+			$("#" + label + "-view").show();
+			$("#" + label + "-form").hide();
+		}
+	}
+	function updateSection(label, newValue){
+		$("#" + label + "-text").text(newValue);
+		setEditable(label, false);
+	}
+</script>
+
+{% include '_profile.html' %}
+
+<!-- Employment Modal -->
+<div id="employment-modal" class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Update your Employment Status</h4>
+			</div>
+			<form action="{{url_for('update_profile_employment')}}" method="POST">
+				<div class="modal-body">
+					<!-- Status -->
+					<div class="row">
+						<div class="col-md-4">
+							Employment Status:
+						</div>
+						<div class="col-md-8">
+							<select name="status" required>
+								<option></option>
+								{% for option in employment_status_options %}
+									<option value="{{option.name}}" {{'selected' if user.employment.get_status() == option else ''}}>{{option.value}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<!-- Occupation -->
+					<div class="row">
+						<div class="col-md-4">
+							Occupation:
+						</div>
+						<div class="col-md-8">
+							<input type="text" name="occupation" value="{{user.employment.occupation if user.employment else ''}}"/>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

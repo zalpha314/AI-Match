@@ -4,39 +4,37 @@ Created on Jun 27, 2015
 @author: Andrew
 '''
 from pony.orm.core import count
-from matchMeUp.models.arguments import RatingEnum
 from matchMeUp.models.qualities import ConnectionStatusEnum
 from matchMeUp.services.connection_service import ConnectionService
 
 NUM_CONTACT_SLOTS = 1
-
-connection_service = ConnectionService()
 
 
 class MatchService():
 
     def __init__(self, db):
         self._db = db
+        self._connection_service = ConnectionService()
 
     def get_next_profile_prospect(self, user):
         # First search for users that have requested your profile
-        for request_in in connection_service.get_profile_requests_in(user):
-            return request_in
+        for req_in in self._connection_service.get_profile_requests_in(user):
+            return req_in
 
         # Get user that has not requested your profile
-        results = self._db.User.select(
-            lambda u: u is not user and u not in user.connected_to
-        )
-        return results[:1][0] if results.exists() else None
+        for user in self._db.User.select(
+                lambda u: u is not user and u not in user.connected_to
+                ):
+            return user
 
-    def rate_attractiveness(self, from_user, to_user, rating_enum):
+    def rate_attractiveness(self, from_user, to_user, rating_bool):
         cncn = self._get_connection(from_user, to_user)
 
         # Add Rating
-        self._db.Rating.create(from_user, to_user, rating_enum)
+        self._db.Rating.create(from_user, to_user, rating_bool)
 
         # Decide whether to request profile
-        if (rating_enum in [RatingEnum.yes, RatingEnum.very]):
+        if rating_bool:
             if cncn.get_status() == ConnectionStatusEnum.profile_requested:
                 # Grant Profile Access
                 cncn.set_status(ConnectionStatusEnum.profile_access)
@@ -48,22 +46,13 @@ class MatchService():
             self.block_user(from_user, to_user)
 
     def next_contact_prospect(self, user):
-        return self._get
-        results = self._db.Connection.select(
-            lambda c:
-            user in c.users and
-            (
-                c.status is ConnectionStatusEnum.profile_access or
-                (
-                    c.status is ConnectionStatusEnum.profile_requested and
-                    c.requester is not user
-                )
-             )
-        )
-        if results.exists():
-            users = results[:1][0].users
-            return users[0] if users[0] is not user else users[1]
-        return None
+        # First, try to get the next contact request in
+        for req_in in self._connection_service.get_profile_requests_in(user):
+            return req_in
+
+        # Then, try to get the next profile contact
+        for p_contact in self._connection_service.get_profile_contacts(user):
+            return p_contact
 
     def request_contact(self, from_user, to_user):
         connection = self._get_connection(from_user, to_user)

@@ -7,12 +7,14 @@ from datetime import date, datetime
 
 from pony.orm import Required, Optional, LongStr, Set
 
-from matchMeUp.models.qualities import ConnectionStatusEnum
+from matchMeUp.models.qualities import (
+        UserLevel, ConnectionStatusEnum, GenderEnum, EmploymentStatusEnum,
+    LookingForEnum, ExclusivityEnum, SmokesEnum, DrugsEnum, DrinksEnum,
+    HasKidsEnum, LivingWithEnum)
 
-'''
+
 def _get_scale():
     return Required(int, size=8, unsigned=True, min=1, max=10)
-'''
 
 
 def define_entities(db):
@@ -33,14 +35,18 @@ def define_entities(db):
 
         last_activity = Required(datetime)
 
-        # photos = Set("Photos")
+        photos = Set("Photo")
 
         # Other Categories
         about = Optional('UserAbout')
-        # seeking = Optional("Seeking")
-        # deal_breakers = Optional("DealBreakers")
+        seeking = Optional("Seeking")
+        employment = Optional('UserEmployment')
+        attractions = Set('UserAttraction')
+        my_deal_breakers = Optional('MyDealBreakers')
+        match_deal_breakers = Optional('MatchDealBreakers')
+
         # compatability = Optional("Compatability")
-        # contact_prefs = Optional("ContactPrefs")
+        contact_prefs = Optional("ContactPrefs")
 
         # ratings
         ratings_in = Set('Rating', reverse='to_user')
@@ -72,59 +78,152 @@ def define_entities(db):
         def get_id(self):
             return self.id
 
+        def get_age(self):
+            born = self.birth_date
+            today = date.today()
+            return (
+                    today.year -
+                    born.year -
+                    ((today.month, today.day) < (born.month, born.day))
+                    )
+
+        def is_admin(self):
+            return self.user_level >= UserLevel.admin.value
+
+        def get_main_photo(self):
+            for photo in self.photos:
+                return photo
+
+        def get_gender(self):
+            return GenderEnum[self.gender]
+
+        def get_attractions(self):
+            return [GenderEnum[i.gender] for i in self.attractions]
+
     class UserAbout(db.Entity):
         user = Required(User)
 
-        # Base
-        first_name = Required(str)
-        postal_code = Required(str)
-        gender = Required(str)
-        employed = Required(str)
-        occupation = Optional(str)
+        summary = Optional(LongStr)
+        interests = Optional(LongStr)
+        doing_with_life = Optional(LongStr)
+        in_spare_time = Optional(LongStr)
+        diet_restrictions = Optional(LongStr)
 
-        # About
-        intro = Optional(LongStr)
-        interests = Optional(str)
-        doingWithLife = Optional(LongStr)
-        inSpareTime = Optional(LongStr)
-        dietRestrictions = Optional(str)
-
-    '''
-    class Photos(db.Entity):
+    class Photo(db.Entity):
         user = Required(User)
 
         file_name = Required(str)
-        description = Required(str)
-        data = Required(bytes)
-        order = Required(int, size=8, unsigned=True)
+        description = Optional(str)
+        order = Required(int, size=8, unsigned=True)  # TODO, unused
 
-
-    class AttractedTo(db.Entity):
-        seeking = Required("Seeking")
-        gender = Required(str)
-
+        def get_url(self):
+            return '/images/photos/{0}/{1}'.format(self.user.id, self.id)
 
     class Seeking(db.Entity):
+        user = Required(User, reverse='seeking')
+
+        looking_for = Required(str)
+        exclusivity = Required(str)
+        years_above = Required(int)
+        years_below = Required(int)
+
+        def get_min_years_below(self):
+            return self.user.get_age() - 18
+
+        def get_min_age(self):
+            return self.user.get_age() - self.years_below
+
+        def get_max_age(self):
+            return self.user.get_age() + self.years_above
+
+        def get_looking_for(self):
+            return LookingForEnum(self.looking_for)
+
+        def get_exclusivity(self):
+            return ExclusivityEnum(self.exclusivity)
+
+    class UserEmployment(db.Entity):
         user = Required(User)
 
-        attracted_to = Set(AttractedTo)
-        looking_for = Required(str)
-        priority = Required(str)
-        monogamy = Required(str)
-        relationship_status = Required(str)
+        status = Required(str)
+        occupation = Optional(str)
 
+        def get_status(self):
+            return EmploymentStatusEnum[self.status]
 
-    class DealBreakers(db.Entity):
+    class UserAttraction(db.Entity):
+        user = Required(User)
+        gender = Required(str)
+
+    class MyDealBreakers(db.Entity):
         user = Required(User)
 
         smokes = Required(str)
         drugs = Required(str)
         drinks = Required(str)
         has_kids = Required(str)
-        wants_kids = Required(str)
-        residende_situation = Required(str)
+        living_with = Required(str)
 
+        def get_smokes(self):
+            return SmokesEnum[self.smokes]
 
+        def get_drugs(self):
+            return DrugsEnum[self.drugs]
+
+        def get_drinks(self):
+            return DrinksEnum[self.drinks]
+
+        def get_has_kids(self):
+            return HasKidsEnum[self.has_kids]
+
+        def get_living_with(self):
+            return LivingWithEnum[self.living_with]
+
+    class MatchDealBreakers(db.Entity):
+        user = Required(User)
+
+        smokes = Set('SmokesDealbreaker')
+        drugs = Set('DrugsDealbreaker')
+        drinks = Set('DrinksDealbreaker')
+        has_kids = Set('HasKidsDealbreaker')
+        living_with = Set('LivingWithDealbreaker')
+
+        def get_smokes(self):
+            return [SmokesEnum[i.smokes] for i in self.smokes]
+
+        def get_drugs(self):
+            return [DrugsEnum[i.drugs] for i in self.drugs]
+
+        def get_drinks(self):
+            return [DrinksEnum[i.drinks] for i in self.drinks]
+
+        def get_has_kids(self):
+            return [HasKidsEnum[i.has_kids] for i in self.has_kids]
+
+        def get_living_with(self):
+            return [LivingWithEnum[i.living_with] for i in self.living_with]
+
+    class SmokesDealbreaker(db.Entity):
+        deal_breakers = Required(MatchDealBreakers)
+        smokes = Required(str)
+
+    class DrugsDealbreaker(db.Entity):
+        deal_breakers = Required(MatchDealBreakers)
+        drugs = Required(str)
+
+    class DrinksDealbreaker(db.Entity):
+        deal_breakers = Required(MatchDealBreakers)
+        drinks = Required(str)
+
+    class HasKidsDealbreaker(db.Entity):
+        deal_breakers = Required(MatchDealBreakers)
+        has_kids = Required(str)
+
+    class LivingWithDealbreaker(db.Entity):
+        deal_breakers = Required(MatchDealBreakers)
+        living_with = Required(str)
+
+    '''
     class Pets(db.Entity):
         compatability = Required("Compatability")
 
@@ -145,40 +244,42 @@ def define_entities(db):
         activity = _get_scale()
         affection = _get_scale()
         adventurousness = _get_scale()
+        # desire for kids
+        # maturity
 
         likes_pets = Set(Pets)
-
+    '''
 
     class ContactPrefs(db.Entity):
-        user = Required(User)
+        user = Required(User, reverse='contact_prefs')
 
+        first_name = Optional(str)
         shyness = _get_scale()
         message_tips = Required(LongStr)
-        conversation_ideas = Required(LongStr)
-    '''
+        convo_ideas = Required(LongStr)
 
     class Rating(db.Entity):
 
-        @classmethod
-        def create(cls, from_user, to_user, rating_enum):
-            return cls(
-                from_user=from_user, to_user=to_user, rating=rating_enum.value)
-
         from_user = Required(User, reverse='ratings_out')
         to_user = Required(User, reverse='ratings_in')
-        rating = Required(float)
+        rating = Required(bool)
+
+        @classmethod
+        def create(cls, from_user, to_user, rating_bool):
+            return cls(
+                from_user=from_user, to_user=to_user, rating=rating_bool)
 
     class Connection(db.Entity):
+
+        users = Set(User)
+        requester = Optional(User)
+        status = Required(int)
 
         @classmethod
         def create(cls, user1, user2):
             return cls(
                 users=[user1, user2],
                 status=ConnectionStatusEnum.no_interaction.value)
-
-        users = Set(User)
-        requester = Optional(User)
-        status = Required(str)
 
         def set_status(self, status_enum):
             self.status = status_enum.value

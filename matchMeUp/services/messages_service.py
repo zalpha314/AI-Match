@@ -22,6 +22,7 @@ class MessagesService():
         thread.users.add(user)
         thread.users.add(with_user)
         user.message_threads.add(thread)
+        return thread
         # TODO ensure with_user gets thread too
 
     def get_messages(self, user, with_user):

@@ -3,38 +3,72 @@
 {% block title %}Messages with {{contact.username}}{% endblock %}
 
 {% block body %}
-<h1>Messages with {{contact.username}}</h1>
 
-{% if not messages %}
-	<p>
-		No messages yet.  How about you send one?
-	</p>
-{% else %}
-	{% for message in messages %}
-		<div class="message">
+<div class="row">
+
+	<div class="col-md-8">
+		<h1>Messages with {{contact.username}}</h1>
+
+		{% if not messages %}
 			<p>
-				{{message.from_user.username}}:
-				<div class="message-text">
-					{{message.text}}
-				</div>
-				<abbr class="timeago" title="{{message.sent_on}}"></abbr>
+				No messages yet.  How about you send one?
 			</p>
+		{% else %}
+			{% for message in messages %}
+				<!-- Message -->
+				<div class="row panel panel-default">
+					<div class="col-md-2 panel-heading">
+						<a href="{{url_for('profile', user_id=message.from_user.id)}}">
+							<img src="{{message.from_user.get_main_photo().get_url()}}" class="img-thumbnail" width="80" height="80"/><br/>
+						</a>
+						{{message.from_user.username}}
+					</div>
+					<p class="col-md-10 panel-body">
+						{{message.text}}
+					</p>
+					<abbr class="timeago" title="{{message.sent_on}}"></abbr>
+				</div>
+			{% endfor %}
+		{% endif %}
+
+
+		<div id="message_draft" name="message">
+			<form method="POST">
+				<input type="hidden" name="foo" value="bar"/>
+				<textarea rows="8", cols="80" name="message" autofocus required placeholder="Write them a nice message.  Be creative, and tailor it to their profile."></textarea><br/>
+				<input type="submit" value="Send"/>
+			</form>
 		</div>
-	{% endfor %}
-{% endif %}
 
+		<form id="end_contact_form" action="{{url_for('block')}}" method="POST">
+			<input type="hidden" name="user_id" value="{{contact.id}}"/>
+			<input type="submit" value="End Contact"/>
+		</form>
+	</div>
 
-<div id="message_draft" name="message">
-	<form method="POST">
-		<input type="hidden" name="foo" value="bar"/>
-		<textarea rows="8", cols="80" name="message" autofocus required placeholder="Write them a nice message.  Be creative, and tailor it to their profile."></textarea><br/>
-		<input type="submit" value="Send"/>
-	</form>
+	<!-- Messaging Tips -->
+	<div class="col-md-3">
+		<h2>Tips for Messaging Me</h2>
+		{% if contact.contact_prefs.first_name %}
+			You can call me <b>{{contact.contact_prefs.first_name}}</b><br/>
+		{% endif %}
+		My shyness level is about {{contact.contact_prefs.shyness}}<br/>
+
+		<p>{{contact.contact_prefs.message_tips}}</p>
+
+		<h3>Some Conversation Ideas</h3>
+		{{contact.contact_prefs.convo_ideas}}
+	</div>
 </div>
+
 
 <script type="application/javascript">
 	$(document).ready(function() {
 	  $("abbr.timeago").timeago();
+	});
+
+	$("#end_contact_form").submit(function(){
+		return confirm('Are you sure you want to end contact with {{contact.username}}?  You will not have another chance with them');
 	});
 </script>
 

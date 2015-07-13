@@ -1,0 +1,53 @@
+<!-- Name, seeking, and employment -->
+<div class="row">
+	<h1>{{user.username}}</h1>
+	is a {{user.get_age()}} year-old {{user.get_gender().display_name}}, looking for {{user.seeking.looking_for}}.
+	{% if user == current_user %}
+		<a href="{{url_for('match_settings')}}"><span class="glyphicon glyphicon-pencil"/></a>
+	{% endif %}
+</div>
+
+<div class="row">
+	{% if user.employment %}
+		{{user.get_gender().addressed_as.title()}} is currently {{user.employment.get_status().value}}{{' as a ' + user.employment.occupation if user.employment.occupation else ''}}.
+	{% else %}
+		You must enter your employment status
+	{% endif %}
+	{% if user == current_user %}
+		<a href="#" data-toggle="modal" data-target="#employment-modal"><span class="glyphicon glyphicon-pencil"/></a>
+	{% endif %}
+</div>
+
+<!-- Photos -->
+<div class="row">
+	{% for photo in user.photos %}
+		<img src="{{photo.get_url()}}"/><br/>
+		<i>{{photo.description}}</i>
+	{% endfor %}
+</div>
+
+<!-- Summary -->
+{% with label='summary', title='My Summary', content=user.about.summary, content_hint="A little summary about you." %}
+	{% include "_profile_editor.html" %}
+{% endwith %}
+
+<!-- Interests -->
+{% with label="interests", title="My Interests", content=user.about.interests, content_hint="Talk about a few of your interests." %}
+	{% include "_profile_editor.html" %}
+{% endwith %}
+
+<!-- What I'm Doing With my Life -->
+{% with label="doing_with_life", title="What I'm Doing With my Life", content=user.about.doing_with_life, content_hint="Talk about your education, career, and aspirations." %}
+	{% include "_profile_editor.html" %}
+{% endwith %}
+
+<!-- What I like to do in my spare time -->
+{% with label="in_spare_time", title="What I Like to do In my Spare Time", content=user.about.in_spare_time, content_hint="Talk about your hobbies, or other things you do in your downtime." %}
+	{% include "_profile_editor.html" %}
+{% endwith %}
+
+{% if user.about.diet_restrictions or user == current_user %}
+	{% with label="diet_restrictions", title="I Have Some Dietary Restrictions", content=user.about.diet_restrictions, content_hint="You may want to warn people of any dietary restrictions that you may have." %}
+		{% include "_profile_editor.html" %}
+	{% endwith %}
+{% endif %}

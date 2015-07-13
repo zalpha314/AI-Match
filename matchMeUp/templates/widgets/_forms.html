@@ -1,0 +1,10 @@
+{% macro selector(name, options, selected=None, multiple=false, required=true) -%}
+	<select name="{{name}}" {{'multiple' if multiple else ''}} {{'required' if required else ''}} }}>
+		{% if required and not multiple and not selected %}
+			<option>--</option>
+		{% endif %}
+		{% for option in options %}
+			<option value="{{option.name}}" {{'selected' if (multiple and option in selected) or (not multiple and option == selected) else ''}}>{{option.value}}</option>
+		{% endfor %}
+	</select>
+{%- endmacro %}

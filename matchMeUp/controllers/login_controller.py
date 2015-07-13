@@ -7,17 +7,17 @@ from datetime import date, datetime, timedelta
 
 from flask import render_template, request, redirect, url_for, flash
 from flask.ext.login import login_required
-from validate_email import validate_email
 from pony.orm.core import db_session
+from validate_email import validate_email
 
 from matchMeUp import app, login_manager, db
-from matchMeUp.models.qualities import Gender
+from matchMeUp.models.qualities import GenderEnum
 from matchMeUp.services.user_service import UserService
+
 
 ##############
 # Attributes #
 ##############
-
 user_service = UserService(db)
 
 MINIMUM_AGE = 18
@@ -57,7 +57,7 @@ ERROR_BIRTH_DATE_UNDERAGE = (
 @db_session
 @login_required
 def index():
-    return render_template('index.html')
+    return redirect(url_for('my_profile'))
 
 
 @app.route('/register', methods=['GET'])
@@ -65,7 +65,7 @@ def index():
 def register():
     return render_template(
             'register.html',
-            gender_choices=[(g.name, g.value) for g in Gender]
+            gender_choices=[(g.name, g.value) for g in GenderEnum]
     )
 
 
@@ -143,7 +143,6 @@ def doLogout():
 ###########
 # Helpers #
 ###########
-
 
 @login_manager.user_loader
 def load_user(user_id):
